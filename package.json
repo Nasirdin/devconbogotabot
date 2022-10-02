@@ -1,0 +1,29 @@
+{
+  "name": "telegram_bot",
+  "version": "1.0.0",
+  "description": "Link: https://t.me/IT_Conf_IWD_Bot\r # Screenshots\r ![alt text](Screenshot1.png)\r ![alt text](Screenshot2.png)\r ![alt text](Screenshot3.png)\r ![alt text](Screenshot4.png)\r ![alt text](Screenshot5.png)",
+  "main": "bot.js",
+  "dependencies": {
+    "dotenv": "^16.0.1",
+    "fs": "0.0.1-security",
+    "telegraf": "^4.8.2"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.16"
+  },
+  "scripts": {
+    "start": "node bot.js",
+    "dev": "nodemon bot.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/noxonsu/telegram_bot.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/noxonsu/telegram_bot/issues"
+  },
+  "homepage": "https://github.com/noxonsu/telegram_bot#readme"
+}

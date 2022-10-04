@@ -56,7 +56,7 @@ bot.start(async (ctx) => {
   };
   if (!users[0]) {
     const newUsers = [{ userId: 1, ...newUser }];
-    usersArr = usersArr;
+    usersArr = newUsers;
   } else {
     let findUser = false;
     users.filter((user) => {
@@ -75,7 +75,6 @@ bot.start(async (ctx) => {
     }
   }
 
-
   ctx.replyWithMarkdown(
     `Hi!
 I'm a chatbot Devcon Bogota 🦄 and I'm here to help you spend time on conferences with benefit and pleasure. \n
@@ -83,7 +82,63 @@ Devcon is an intensive introduction for new Ethereum explorers, a global family 
 Use the convenient menu to quickly find the information you need👇\n\n` + getHelp()
   );
 });
-bot.command("getallusers", async (ctx) => {
+
+const report = async (usersArr, ctx, type) => {
+  try {
+    usersArr.map((user) => {
+      bot.telegram.sendMessage(user.chatId, "hi");
+    });
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+let reportMessage = ``;
+
+bot.action("send_report", (ctx) => {
+  usersArr.map((user) => {
+    bot.telegram.sendMessage(user.chatId, reportMessage);
+  });
+  ctx.replyWithHTML("success 🎉");
+});
+
+bot.action("edit_report", (ctx) => {
+  ctx.replyWithHTML(`What do you want to send?
+    Example: /report Hi! user :)`);
+});
+
+bot.action("delete_report", (ctx) => {
+  reportMessage = "";
+  ctx.replyWithHTML("success 🎉");
+});
+
+bot.command("report", (ctx) => {
+  try {
+    const message = ctx.message.text.split(" ");
+    if (message.length < 2) {
+      ctx.replyWithHTML(`What do you want to send?
+Example: /report Hi! user :)`);
+    } else {
+      delete message[0];
+      reportMessage = message.join(" ");
+      ctx.replyWithHTML(
+        `check the message 👇
+      ${reportMessage}
+      
+      `,
+        Markup.inlineKeyboard([
+          [Markup.button.callback("✅ Send", "send_report")],
+          [Markup.button.callback("✏ Edit", "edit_report")],
+          [Markup.button.callback("❌ Delete", "delete_report")],
+        ])
+      );
+    }
+  } catch (error) {
+    console.error(error);
+  }
+});
+bot.command("getallusers", (ctx) => {
+  report();
   const users = usersArr;
   const res = users.map((user) => {
     return `${user.userId} : @${user.username} | ${user.chatId}`;
@@ -166,7 +221,7 @@ let programEvents = {
       eventName: "DVT - Decentralized Validator Tech and mainnet launch",
       speaker: "Alon Muroch - SSV.Network",
       type: "Talk |  Ethereum Layers",
-    }
+    },
   ],
 };
 
@@ -211,7 +266,8 @@ let sideEvents = {
       location: "Agora Bogotá CAc. 24 #38-47 Bogotá, Colombia",
       price: "Free",
       link: "https://bogota.ethglobal.com/",
-    },{
+    },
+    {
       eventsName: "Cartesi Hacker Home | ETH Bogota & Devcon 2022",
       date: "2022-10-7",
       startTime: "19:00",
@@ -230,7 +286,8 @@ let sideEvents = {
       location: "Casa Dann Carlton Hotel & Spa 🇨🇴 Bogota, Colombia",
       price: "Free",
       link: "https://gitcoin.co/hackathon/metis-bogota/onboard",
-    },{
+    },
+    {
       eventsName: "Infinite Hackaton",
       date: "2022-10-8",
       startTime: "",
@@ -238,7 +295,8 @@ let sideEvents = {
       location: "Hilton DoubleTree Conference Salitre, Bogotá",
       price: "Free",
       link: "https://infinite-hackathons.eth.limo",
-    },{
+    },
+    {
       eventsName: "ETHBogota Hackathon",
       date: "2022-10-8",
       startTime: "08:00",
@@ -246,7 +304,8 @@ let sideEvents = {
       location: "Agora Bogotá CAc. 24 #38-47 Bogotá, Colombia",
       price: "Free",
       link: "https://bogota.ethglobal.com/",
-    },{
+    },
+    {
       eventsName: "Cartesi Hacker Home | ETH Bogota & Devcon 2022",
       date: "2022-10-8",
       startTime: "19:00",
@@ -265,15 +324,18 @@ let sideEvents = {
       location: "Cra. 5 #12C-73, La Candelaria, Bogotá, Colombia",
       price: "Free",
       link: "https://www.thedaoist.co/event/bogota-2022",
-    },{
+    },
+    {
       eventsName: "Leading Privacy Alliance @ DevCon",
       date: "2022-10-9",
       startTime: "16:30",
       endTime: "21:00",
-      location: "Hyatt Place Bogota, Av. Calle 24 # 40 - 47, Bogota, 111321 Av. Calle 24 # 40 - 47 Bogota, 111321 Colombia",
+      location:
+        "Hyatt Place Bogota, Av. Calle 24 # 40 - 47, Bogota, 111321 Av. Calle 24 # 40 - 47 Bogota, 111321 Colombia",
       price: "Free",
       link: "https://www.eventbrite.com/e/leading-privacy-alliance-devcon-tickets-401214632767",
-    },{
+    },
+    {
       eventsName: "Infinite Hackaton",
       date: "2022-10-9",
       startTime: "",
@@ -281,7 +343,8 @@ let sideEvents = {
       location: "TBD",
       price: "TBD",
       link: "https://infinite-hackathons.eth.limo",
-    },{
+    },
+    {
       eventsName: "BOGO Hacks",
       date: "2022-10-9",
       startTime: "09:00",
@@ -289,7 +352,8 @@ let sideEvents = {
       location: "Casa Dann Carlton Hotel & Spa 🇨🇴 Bogota, Colombia",
       price: "Free",
       link: "https://gitcoin.co/hackathon/metis-bogota/onboard",
-    },{
+    },
+    {
       eventsName: "The Dawn of Decent Builder Houses",
       date: "2022-10-9",
       startTime: "",
@@ -297,7 +361,8 @@ let sideEvents = {
       location: "TBD",
       price: "Free",
       link: "https://mirror.xyz/decent-dao.eth/wjWOhHKHoLm1iVZxbCss2KLwJsnpozEOkOqDk5uYlfk",
-    },{
+    },
+    {
       eventsName: "Cartesi Hacker Home | ETH Bogota & Devcon 2022",
       date: "2022-10-",
       startTime: "19:00",
@@ -305,7 +370,8 @@ let sideEvents = {
       location: "Suba Suba, Bogotá 111121 Bogotá, Bogota Colombia",
       price: "Free",
       link: "https://www.eventbrite.com/e/cartesi-hacker-home-eth-bogota-devcon-2022-tickets-418359433327",
-    },{
+    },
+    {
       eventsName: "ETHBogota Hackathon",
       date: "2022-10-9",
       startTime: "08:00",
@@ -324,7 +390,8 @@ let sideEvents = {
       location: "Polygon Connect Bogota: After Party",
       price: "Free",
       link: "https://www.eventbrite.com/e/polygon-connect-bogota-tickets-418910401287",
-    },{
+    },
+    {
       eventsName: "Schelling Point",
       date: "2022-10-10",
       startTime: "",
@@ -332,15 +399,18 @@ let sideEvents = {
       location: "Gran Americas Pavillon",
       price: "TBD",
       link: "https://schellingpoint.gitcoin.co/",
-    },{
+    },
+    {
       eventsName: "HUMANS, MACHINES, JOURNALISTS & DRINKS",
       date: "2022-10-10",
       startTime: "18:20",
       endTime: "20:30",
-      location: "Black Tower Premium Hotel Bogota Corferias 43a-21 Avenida La Esperanza Bogota, Cundinamarca 111321 Colombia",
+      location:
+        "Black Tower Premium Hotel Bogota Corferias 43a-21 Avenida La Esperanza Bogota, Cundinamarca 111321 Colombia",
       price: "Free",
       link: "https://www.eventbrite.com/e/humans-machines-journalists-drinks-tickets-425727952767",
-    },{
+    },
+    {
       eventsName: "Reserve Protocol Launch Event",
       date: "2022-10-10",
       startTime: "09:00",
@@ -348,7 +418,8 @@ let sideEvents = {
       location: "Reserve Protocol Launch Event",
       price: "Free",
       link: "https://www.eventbrite.com/e/reserve-protocol-launch-event-tickets-393454782847",
-    },{
+    },
+    {
       eventsName: "Mina zkApp Developers Meetup - Bogota",
       date: "2022-10-10",
       startTime: "18:00",
@@ -356,7 +427,8 @@ let sideEvents = {
       location: "TBD",
       price: "Free",
       link: "https://www.eventbrite.com/e/mina-zkapp-developers-meetup-bogota-tickets-382900083457",
-    },{
+    },
+    {
       eventsName: "Talent Brunch by Talent Protocol & Celo",
       date: "2022-10-10",
       startTime: "11:00",
@@ -364,7 +436,8 @@ let sideEvents = {
       location: "Mesa Salvaje, Dg. 55 #4-14, Bogotá",
       price: "Free",
       link: "https://lu.ma/talentbrunchBogota",
-    },{
+    },
+    {
       eventsName: "Panel - Making wallets safer and more private than ever before with HOPR",
       date: "2022-10-10",
       startTime: "17:00",
@@ -372,7 +445,8 @@ let sideEvents = {
       location: "Hyatt Place Bogota / Convention Center 40 - 47 Avenida Calle 24 Bogotá, Bogotá 111311 Colombia",
       price: "Free",
       link: "https://www.eventbrite.pt/e/panel-making-wallets-safer-and-more-private-than-ever-before-with-hopr-tickets-424050144397",
-    },{
+    },
+    {
       eventsName: "BOGO Hacks",
       date: "2022-10-10",
       startTime: "11:00",
@@ -380,7 +454,8 @@ let sideEvents = {
       location: "Casa Dann Carlton Hotel & Spa 🇨🇴 Bogota, Colombia",
       price: "Free",
       link: "https://gitcoin.co/hackathon/metis-bogota/onboard",
-    },{
+    },
+    {
       eventsName: "Rollup Day",
       date: "2022-10-10",
       startTime: "12:30",
@@ -388,7 +463,8 @@ let sideEvents = {
       location: "Grand Hyatt Bogotá # 57 – 60 Calle 24a Bogotá, Bogotá 111321 Colombia",
       price: "Free",
       link: "https://www.eventbrite.com/e/rollup-day-tickets-424113834897?aff=erellivmlt",
-    },{
+    },
+    {
       eventsName: "Metis Fest",
       date: "2022-10-10",
       startTime: "18:00",
@@ -396,7 +472,8 @@ let sideEvents = {
       location: "Bogotá, Bogotá, Colombia",
       price: "Free",
       link: "https://www.eventbrite.sg/e/metis-fest-tickets-419323988337",
-    },{
+    },
+    {
       eventsName: "Polygon Connect Bogota",
       date: "2022-10-10",
       startTime: "09:00",
@@ -404,7 +481,8 @@ let sideEvents = {
       location: "Corferias 24 - 67 Carrera 37 Bogotá, Bogotá 111321 Colombia",
       price: "Free",
       link: "Corferias 24 - 67 Carrera 37 Bogotá, Bogotá 111321 Colombia",
-    },{
+    },
+    {
       eventsName: "Crypto Nomads Club, BanklessDAO",
       date: "2022-10-10",
       startTime: "13:00",
@@ -412,7 +490,8 @@ let sideEvents = {
       location: "TBD",
       price: "Free",
       link: "https://www.cryptonomadsclub.xyz/bogota-walking-tour",
-    },{
+    },
+    {
       eventsName: "The Dawn of Decent Builder Houses",
       date: "2022-10-10",
       startTime: "",
@@ -420,7 +499,8 @@ let sideEvents = {
       location: "TBD",
       price: "Free",
       link: "https://mirror.xyz/decent-dao.eth/wjWOhHKHoLm1iVZxbCss2KLwJsnpozEOkOqDk5uYlfk",
-    },{
+    },
+    {
       eventsName: "Cartesi Hacker Home | ETH Bogota & Devcon 2022",
       date: "2022-10-10",
       startTime: "19:00",
@@ -428,7 +508,8 @@ let sideEvents = {
       location: "Suba Suba, Bogotá 111121 Bogotá, Bogota Colombia",
       price: "Free",
       link: "https://www.eventbrite.com/e/cartesi-hacker-home-eth-bogota-devcon-2022-tickets-418359433327",
-    },{
+    },
+    {
       eventsName: "DeFi Bogota",
       date: "2022-10-10",
       startTime: "11:00",
@@ -447,7 +528,8 @@ let sideEvents = {
       location: "La Fiesta Balancer Libre Hosted by Balancer Ecosystem Partners",
       price: "Free",
       link: "https://bit.ly/CarnavaldeBalancer",
-    },{
+    },
+    {
       eventsName: "WELL EXTRACTED: Breakfast, Coffee, & Web3's role in the Coffee Industry",
       date: "2022-10-11",
       startTime: "07:30",
@@ -455,7 +537,8 @@ let sideEvents = {
       location: "Azahar Café 13-91 Calle 93b Bogotá, DC 110221 Colombia",
       price: "0.05 ETH",
       link: "https://www.eventbrite.com/e/well-extracted-breakfast-coffee-web3s-role-in-the-coffee-industry-registration-427178952747",
-    },{
+    },
+    {
       eventsName: "Ethereum for the Next Billion | Panel discussion and Happy hour",
       date: "2022-10-11",
       startTime: "17:00",
@@ -463,7 +546,8 @@ let sideEvents = {
       location: "Hilton Bogota Corferias 24 29 Carrera 37 Bogotá, Cundinamarca 111321 Colombia",
       price: "Free",
       link: "https://www.eventbrite.com/e/ethereum-for-the-next-billion-panel-discussion-and-happy-hour-tickets-406804612547",
-    },{
+    },
+    {
       eventsName: "GamesCon: The Gamefi Collective - A Meetup",
       date: "2022-10-11",
       startTime: "17:00",
@@ -471,7 +555,8 @@ let sideEvents = {
       location: "The Click Clack Hotel Bogotá, Carrera 11#93-77, Bogotá, Cundinamarca, Colombia",
       price: "Free",
       link: "https://lu.ma/xjcxtmfv",
-    },{
+    },
+    {
       eventsName: "The Dawn of Decent Builder Houses",
       date: "2022-10-11",
       startTime: "",
@@ -479,7 +564,8 @@ let sideEvents = {
       location: "TBD",
       price: "Free",
       link: "https://mirror.xyz/decent-dao.eth/wjWOhHKHoLm1iVZxbCss2KLwJsnpozEOkOqDk5uYlfk",
-    },{
+    },
+    {
       eventsName: "Cocktails and conversations in the sky by ChainSafe Systems",
       date: "2022-10-11",
       startTime: "18:00",
@@ -487,15 +573,18 @@ let sideEvents = {
       location: "Astoria Rooftop # 12 - 66 Avenida Calle 85 Bogotá, Bogotá 110221 Colombia",
       price: "Free",
       link: "Cocktails and conversations in the sky by ChainSafe Systems",
-    },{
+    },
+    {
       eventsName: "Oasis Cafe @ DevCon",
       date: "2022-10-11",
       startTime: "10:00",
       endTime: "18:00",
-      location: "Érase una vez café de especialidad 25-76 Carrera 38a #Piso 1 Bogotá, Bogotá 111321 ColombiaÉrase una vez café de especialidad 25-76 Carrera 38a #Piso 1 Bogotá, Bogotá 111321 Colombia",
+      location:
+        "Érase una vez café de especialidad 25-76 Carrera 38a #Piso 1 Bogotá, Bogotá 111321 ColombiaÉrase una vez café de especialidad 25-76 Carrera 38a #Piso 1 Bogotá, Bogotá 111321 Colombia",
       price: "Free",
       link: "https://www.eventbrite.com/e/oasis-cafe-devcon-tickets-424223753667",
-    },{
+    },
+    {
       eventsName: "Cartesi Hacker Home | ETH Bogota & Devcon 2022",
       date: "2022-10-11",
       startTime: "19:00",
@@ -514,7 +603,8 @@ let sideEvents = {
       location: "Hyatt Place Bogota / Convention Center 40 - 47 Avenida Calle 24 Bogotá, Bogotá 111311 Colombia",
       price: "Free",
       link: "https://www.eventbrite.com/e/eth-devcon-bogota-the-future-of-human-connection-inout-games-tickets-402242948487",
-    },{
+    },
+    {
       eventsName: "Sustainable Blockchain Summit LATAM by Protocol Labs",
       date: "2022-10-12",
       startTime: "18:00",
@@ -522,7 +612,8 @@ let sideEvents = {
       location: "TBD",
       price: "Donation",
       link: "https://www.eventbrite.com/e/sustainable-blockchain-summit-latam-tickets-397452199227",
-    },{
+    },
+    {
       eventsName: "The Future of Human Connection - In/Out Games",
       date: "2022-10-12",
       startTime: "14:30",
@@ -530,7 +621,8 @@ let sideEvents = {
       location: "Hyatt Place Bogota, Av. Calle 24 # 40 - 47, Bogota, 111321",
       price: "Free",
       link: "https://www.eventbrite.pt/e/eth-devcon-bogota-the-future-of-human-connection-inout-games-tickets-402242948487",
-    },{
+    },
+    {
       eventsName: "Reserve Rangwers Night by Reserve Protocol",
       date: "2022-10-12",
       startTime: "18:00",
@@ -538,7 +630,8 @@ let sideEvents = {
       location: "RSVP after signing up on the website",
       price: "Free",
       link: "https://partiful.com/e/fhsR2ndCm52AZFJRI9gh",
-    },{
+    },
+    {
       eventsName: "Meet EEA Leadership at Web3 Retreat",
       date: "2022-10-12",
       startTime: "15:00",
@@ -546,7 +639,8 @@ let sideEvents = {
       location: "Andrés Paradero Hyatt Place, Ac. 24 # 40 - 51, Bogotá, Cundinamarca, Colombia",
       price: "Free",
       link: "https://lu.ma/meet.EEA.Leadership",
-    },{
+    },
+    {
       eventsName: "The Cross Chain Cocktail Party",
       date: "2022-10-12",
       startTime: "17:00",
@@ -554,7 +648,8 @@ let sideEvents = {
       location: "Mónaco Rooftop, calle 90 #16-34, #Piso 22",
       price: "Free",
       link: "https://www.eventbrite.com/e/cross-chain-cocktail-event-in-bogota-tickets-404357603477",
-    },{
+    },
+    {
       eventsName: "Cartesi Hacker Home | ETH Bogota & Devcon 2022",
       date: "2022-10-12",
       startTime: "19:00",
@@ -573,7 +668,8 @@ let sideEvents = {
       location: "Secret Location",
       price: "Free",
       link: "https://mail.google.com/mail/u/0/#inbox/FMfcgzGqQmSFMTllBXPfHPwRFQScBwQg",
-    },{
+    },
+    {
       eventsName: "NEAR Space at DEVCON VI",
       date: "2022-10-13",
       startTime: "09:30",
@@ -581,7 +677,8 @@ let sideEvents = {
       location: "DoubleTree by Hilton Bogota Salitre AR 22-99 Carrera 60 Bogotá, Cundinamarca 111321 Colombia",
       price: "Free",
       link: "https://www.eventbrite.com/e/near-space-at-devcon-vi-tickets-410199677277",
-    },{
+    },
+    {
       eventsName: "A Hitchhiker's Guide to ZK: An Aleo Developer Workshop by Aleo",
       date: "2022-10-13",
       startTime: "08:00",
@@ -589,7 +686,8 @@ let sideEvents = {
       location: "Hilton Bogota Corferias 24 29 Carrera 37 Bogotá, Cundinamarca 111321 Colombia",
       price: "$10",
       link: "https://www.eventbrite.com/e/a-hitchhikers-guide-to-zk-an-aleo-developer-workshop-tickets-407605849067",
-    },{
+    },
+    {
       eventsName: "Etherna's Community Party",
       date: "2022-10-13",
       startTime: "19:30",
@@ -597,7 +695,8 @@ let sideEvents = {
       location: "Cervecería Lateral Candelaria Calle 12 12c 69 Carrera 5 Bogotá, Bogotá 110321 Colombia",
       price: "Free",
       link: "https://www.eventbrite.com/e/ethernas-community-party-tickets-413257784157",
-    },{
+    },
+    {
       eventsName: "DAIVinity",
       date: "2022-10-13",
       startTime: "",
@@ -605,7 +704,8 @@ let sideEvents = {
       location: "TBD",
       price: "Free",
       link: "https://twitter.com/Daivinity/status/1554538554881196032?s=20&t=cU6V_uK_5tj32aDTK1ZP5w",
-    },{
+    },
+    {
       eventsName: "Into the K-Blockchain (Devcon Side Event)",
       date: "2022-10-13",
       startTime: "15:00",
@@ -613,7 +713,8 @@ let sideEvents = {
       location: "Grand Hyatt Bogotá # 57 – 60 Calle 24a Bogotá, Bogotá 111321 Colombia",
       price: "Free",
       link: "https://www.eventbrite.pt/e/into-the-k-blockchain-devcon-side-event-tickets-427732919677",
-    },{
+    },
+    {
       eventsName: "La Womxn in Web3",
       date: "2022-10-13",
       startTime: "09:00",
@@ -621,7 +722,8 @@ let sideEvents = {
       location: "La Womxn in Web3",
       price: "Free",
       link: "https://www.eventbrite.com/e/cartesi-hacker-home-eth-bogota-devcon-2022-tickets-418359433327",
-    },{
+    },
+    {
       eventsName: "Cartesi Hacker Home | ETH Bogota & Devcon 2022",
       date: "2022-10-13",
       startTime: "10:00",
@@ -629,7 +731,8 @@ let sideEvents = {
       location: "Suba Suba, Bogotá 111121 Bogotá, Bogota Colombia",
       price: "Free",
       link: "https://www.eventbrite.com/e/cartesi-hacker-home-eth-bogota-devcon-2022-tickets-418359433327",
-    },{
+    },
+    {
       eventsName: "Blu3 Day Colombia",
       date: "2022-10-13",
       startTime: "12:00",
@@ -669,7 +772,7 @@ let sideEvents = {
       price: "Free",
       link: "https://www.eventbrite.com/e/cartesi-hacker-home-eth-bogota-devcon-2022-tickets-418359433327",
     },
-  ]
+  ],
 };
 
 const program_by_day_keyboard = [
@@ -797,9 +900,9 @@ bot.action("program_by_day_12", async (ctx) => {
   ctx.reply(`Program list is empty`);
 
   // ctx.reply(`Select conference type:`, {
-    // reply_markup: {
-      // inline_keyboard: type_con_by_day_keyboard_12,
-    // },
+  // reply_markup: {
+  // inline_keyboard: type_con_by_day_keyboard_12,
+  // },
   // });
 });
 bot.action("program_by_day_13", async (ctx) => {
@@ -807,9 +910,9 @@ bot.action("program_by_day_13", async (ctx) => {
   ctx.reply(`Program list is empty`);
 
   // ctx.reply(`Select conference type:`, {
-    // reply_markup: {
-      // inline_keyboard: type_con_by_day_keyboard_13,
-    // },
+  // reply_markup: {
+  // inline_keyboard: type_con_by_day_keyboard_13,
+  // },
   // });
 });
 bot.action("program_by_day_14", async (ctx) => {
@@ -817,9 +920,9 @@ bot.action("program_by_day_14", async (ctx) => {
   ctx.reply(`Program list is empty`);
 
   // ctx.reply(`Select conference type:`, {
-    // reply_markup: {
-      // inline_keyboard: type_con_by_day_keyboard_14,
-    // },
+  // reply_markup: {
+  // inline_keyboard: type_con_by_day_keyboard_14,
+  // },
   // });
 });
 
